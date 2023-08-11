@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class SimulationProducer {
+public class ResponseProducer {
 
     @Resource
     private KafkaTemplate<Object, Object> kafkaTemplate;
@@ -23,7 +23,7 @@ public class SimulationProducer {
 
         //ProducerRecord<Object, String> producerRecord = new ProducerRecord<>("DEMO_05", jsonMessage);
         // 同步发送消息
-        return kafkaTemplate.send("simulation-request", jsonMessage).get();
+        return kafkaTemplate.send("simulation-response", jsonMessage).get();
     }
 
 }

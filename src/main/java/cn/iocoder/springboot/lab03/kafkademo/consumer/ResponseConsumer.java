@@ -4,6 +4,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.iocoder.springboot.lab03.kafkademo.message.Demo04Message;
 import cn.iocoder.springboot.lab03.kafkademo.message.Demo05Message;
+import cn.iocoder.springboot.lab03.kafkademo.message.SimulationMessage;
+import cn.iocoder.springboot.lab03.kafkademo.message.SimulationResponse;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,19 +15,20 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class Demo05Consumer {
+public class ResponseConsumer {
 
     private AtomicInteger count = new AtomicInteger(0);
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @KafkaListener(topics = "DEMO_05",
-            groupId = "demo06-consumer-group-" +"DEMO_06")
+
+    @KafkaListener(topics = "simulation-response",
+            groupId = "simulation-consumer-group-" + SimulationResponse.TOPIC)
     public void onMessage(String record) {
+        logger.info("收到simulation response");
         logger.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), record);
-        System.out.println(record);
-        JSONObject jsonObject = JSONUtil.parseObj(record);
-        System.out.println(jsonObject);
+
+        System.out.println("收到引擎处理数据" + record);
         // 注意，此处抛出一个 RuntimeException 异常，模拟消费失败
 //        throw new RuntimeException("我就是故意抛出一个异常");
     }
