@@ -17,12 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class ResponseConsumer {
 
+
     private AtomicInteger count = new AtomicInteger(0);
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    @KafkaListener(topics = "simulation-response",
+    @KafkaListener(topics = SimulationResponse.TOPIC,
             groupId = "simulation-consumer-group-" + SimulationResponse.TOPIC)
     public void onMessage(String record) {
         logger.info("收到simulation response");

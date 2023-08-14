@@ -11,6 +11,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,7 @@ public class SimulationConsumer {
     @Autowired
     private ResponseProducer responseProducer = new ResponseProducer();
 
-    @KafkaListener(topics = "simulation-request",
+    @KafkaListener(topics = SimulationMessage.TOPIC,
             groupId = "request-consumer-group-" + SimulationMessage.TOPIC)
     public void onMessage(String record) throws ExecutionException, InterruptedException {
         logger.info("收到simulation request");

@@ -3,6 +3,7 @@ package cn.iocoder.springboot.lab03.kafkademo.producer;
 import cn.hutool.json.JSONObject;
 import cn.iocoder.springboot.lab03.kafkademo.message.*;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class SimulationProducer {
 
         //ProducerRecord<Object, String> producerRecord = new ProducerRecord<>("DEMO_05", jsonMessage);
         // 同步发送消息
-        return kafkaTemplate.send("simulation-request", jsonMessage).get();
+        return kafkaTemplate.send(SimulationMessage.TOPIC, jsonMessage).get();
     }
 
 }

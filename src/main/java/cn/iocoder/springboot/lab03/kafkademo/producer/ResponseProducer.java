@@ -23,7 +23,7 @@ public class ResponseProducer {
 
         //ProducerRecord<Object, String> producerRecord = new ProducerRecord<>("DEMO_05", jsonMessage);
         // 同步发送消息
-        return kafkaTemplate.send("simulation-response", jsonMessage).get();
+        return kafkaTemplate.send(SimulationResponse.TOPIC, jsonMessage).get();
     }
 
 }
