@@ -34,3 +34,9 @@ logging:
 #topic:
 #  request-topic: topic-1
 #  response-topic: effect-data-topic-2
+
+
+ws:
+  host: 127.0.0.1
+  port: 80
+  path: /ws/
