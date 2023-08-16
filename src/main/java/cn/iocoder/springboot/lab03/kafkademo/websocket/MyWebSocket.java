@@ -1,11 +1,16 @@
 package cn.iocoder.springboot.lab03.kafkademo.websocket;
 
 
+import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import cn.iocoder.springboot.lab03.kafkademo.message.SimulationMessage;
+import cn.iocoder.springboot.lab03.kafkademo.message.SimulationResponse;
 import cn.iocoder.springboot.lab03.kafkademo.producer.ResponseProducer;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.MultiValueMap;
 import org.yeauty.annotation.*;
 import org.yeauty.pojo.Session;
@@ -13,14 +18,18 @@ import org.yeauty.pojo.Session;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 
 @ServerEndpoint(path = "/ws")
 public class MyWebSocket {
 
-    public static Queue<JSONObject> KafkaData = new LinkedList<>();
     @Autowired
     private ResponseProducer responseProducer;
+
+    @Value("${spring.server.ip}")
+    private String serverIp;
     @BeforeHandshake
     public void handshake(Session session, HttpHeaders headers, @RequestParam String req, @RequestParam MultiValueMap reqMap, @PathVariable String arg, @PathVariable Map pathMap){
         session.setSubprotocols("stomp");
@@ -34,13 +43,11 @@ public class MyWebSocket {
     public void onOpen(Session session, HttpHeaders headers, @RequestParam String req, @RequestParam MultiValueMap reqMap, @PathVariable String arg, @PathVariable Map pathMap){
         System.out.println("new connection");
         System.out.println(req);
-        try {
-            Thread.sleep(200000);
-            JSONObject a = KafkaData.poll();
-            System.out.println(a.toString());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+        /*TODO：
+            向UE发送redis里的数据
+         */
+
     }
 
     @OnClose
@@ -54,9 +61,30 @@ public class MyWebSocket {
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message) throws ExecutionException, InterruptedException {
         System.out.println(message);
         session.sendText("Hello Netty!");
+        /*TODO：
+            if msg == OK
+                接收到taskId和端口号并返回给kafka
+            if msg == Done
+                向kafka返回数据
+         */
+        JSONObject jsonObject = JSONUtil.parseObj(message);
+        JSONObject responseObject = JSONUtil.createObj();
+        String status = jsonObject.getStr("status");
+        if (Objects.equals(status, "OK")){
+
+            responseObject.put("task_id", jsonObject.getInt("task_id"));
+            responseObject.put("url",serverIp + ":" + jsonObject.getStr("port"));
+            responseProducer.syncSend(responseObject);
+        }
+        else if (Objects.equals(status, "Done")) {
+            responseObject.put("task_id", jsonObject.getInt("task_id"));
+            responseObject.put("data", jsonObject.getStr("data"));
+            responseProducer.syncSend(responseObject);
+        }
+
 
 
     }

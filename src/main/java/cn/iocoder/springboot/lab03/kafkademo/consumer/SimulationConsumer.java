@@ -37,18 +37,31 @@ public class SimulationConsumer {
         logger.info("收到simulation request");
         logger.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), record);
         JSONObject jsonObject = JSONUtil.parseObj(record);
-        MyWebSocket.KafkaData.add(jsonObject);
-        /*
+
+
+
+        /*TODO：
+            将record存入redis
             打开shell
          */
-        int test_id = (int) jsonObject.get("test_id");
-        System.out.println(test_id );
-        JSONObject responseJson = JSONUtil.createObj();
-        responseJson.put("test_id", test_id);
-        responseJson.put("msg", "处理成功");
-        System.out.println(responseJson);
-        SendResult result = responseProducer.syncSend(responseJson);
-        System.out.println("向服务端返回数据" + result);
+
+
+
+
+
+
+
+
+
+
+//        int test_id = (int) jsonObject.get("test_id");
+//        System.out.println(test_id );
+//        JSONObject responseJson = JSONUtil.createObj();
+//        responseJson.put("test_id", test_id);
+//        responseJson.put("msg", "处理成功");
+//        System.out.println(responseJson);
+//        SendResult result = responseProducer.syncSend(responseJson);
+//        System.out.println("向服务端返回数据" + result);
 
         // 注意，此处抛出一个 RuntimeException 异常，模拟消费失败
 //        throw new RuntimeException("我就是故意抛出一个异常");
