@@ -7,6 +7,7 @@ import cn.iocoder.springboot.lab03.kafkademo.message.Demo05Message;
 import cn.iocoder.springboot.lab03.kafkademo.message.SimulationMessage;
 import cn.iocoder.springboot.lab03.kafkademo.message.SimulationResponse;
 import cn.iocoder.springboot.lab03.kafkademo.producer.ResponseProducer;
+import cn.iocoder.springboot.lab03.kafkademo.websocket.MyWebSocket;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,10 @@ public class SimulationConsumer {
         logger.info("收到simulation request");
         logger.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), record);
         JSONObject jsonObject = JSONUtil.parseObj(record);
-        System.out.println(jsonObject);
-
+        MyWebSocket.KafkaData.add(jsonObject);
+        /*
+            打开shell
+         */
         int test_id = (int) jsonObject.get("test_id");
         System.out.println(test_id );
         JSONObject responseJson = JSONUtil.createObj();
